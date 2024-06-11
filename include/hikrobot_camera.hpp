@@ -37,7 +37,8 @@ enum CamerProperties
     CAP_PROP_TRIGGER_MODE,      //外部触发
     CAP_PROP_TRIGGER_SOURCE,    //触发源
     CAP_PROP_LINE_SELECTOR,     //触发线
-    CAP_PROP_EXPOSURE_AUTO      // 自动曝光
+    CAP_PROP_EXPOSURE_AUTO,     // 自动曝光
+    CAP_PROP_BALANCE_WHITE_AUTO // 自动白平衡
 };
 
 //^ *********************************************************************************** //
@@ -107,7 +108,7 @@ Camera::Camera(ros::NodeHandle &node)
     node.param("GainAuto", GainAuto, 2);
     node.param("BalanceWhiteAuto", BalanceWhiteAuto, 1);
     node.param("ExposureAuto", ExposureAuto, 2);
-    node.param("SaturationEnable", SaturationEnable,true);
+    node.param("SaturationEnable", SaturationEnable, true);
     node.param("Saturation", Saturation, 128);
     node.param("Offset_x", Offset_x, 0);
     node.param("Offset_y", Offset_y, 0);
@@ -183,15 +184,7 @@ Camera::Camera(ros::NodeHandle &node)
     if (GammaEnable)
         this->set(CAP_PROP_GAMMA, Gamma);
     this->set(CAP_PROP_GAINAUTO, GainAuto);
-    nRet = MV_CC_SetEnumValue(handle, "BalanceWhiteAuto", BalanceWhiteAuto);
-    if (MV_OK == nRet)
-    {
-        printf("set BalanceWhiteAuto OK! value=%d\n", BalanceWhiteAuto);
-    }
-    else
-    {
-        printf("Set BalanceWhiteAuto Failed! nRet = [%x]\n\n", nRet);
-    }
+    this->set(CAP_PROP_BALANCE_WHITE_AUTO, BalanceWhiteAuto);
     this->set(CAP_PROP_EXPOSURE_AUTO, ExposureAuto);
     this->set(CAP_PROP_SATURATION_ENABLE, SaturationEnable);
     if (SaturationEnable)
@@ -475,6 +468,17 @@ bool Camera::set(CamerProperties type, float value)
             printf("Set ExposureAuto Failed! nRet = [%x]\n\n", nRet);
         }
         break;
+    case CAP_PROP_BALANCE_WHITE_AUTO:
+        nRet = MV_CC_SetEnumValue(handle, "BalanceWhiteAuto", value); // 自动白平衡
+        if (MV_OK == nRet)
+        {
+            printf("set BalanceWhiteAuto OK! value=%f\n", value);
+        }
+        else
+        {
+            printf("Set BalanceWhiteAuto Failed! nRet = [%x]\n\n", nRet);
+        }
+        break;
     default:
         return 0;
     }
@@ -501,6 +505,7 @@ bool Camera::reset()
     nRet = this->set(CAP_PROP_TRIGGER_SOURCE, TriggerSource) || nRet;
     nRet = this->set(CAP_PROP_LINE_SELECTOR, LineSelector) || nRet;
     nRet = this->set(CAP_PROP_EXPOSURE_AUTO, ExposureAuto) || nRet;
+    nRet = this->set(CAP_PROP_BALANCE_WHITE_AUTO, BalanceWhiteAuto) || nRet;
     return nRet;
 }
 

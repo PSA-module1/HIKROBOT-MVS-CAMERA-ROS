@@ -25,8 +25,8 @@ ENV LC_ALL C.UTF-8
 ENV ROS_DISTRO noetic
 
 # Install MVS SDK 2.1.2
-COPY /home/yichen/my_prjs/aQC_project/sensor_drivers/hikrobot-ros/MVS-2.1.2_x86_64_20231116.deb /root/MVS-2.1.2_x86_64_20231116.deb
-RUN dpkg -i /root/MVS-2.1.2_x86_64_20231116.deb
+COPY MVS-2.1.2_x86_64_20231116.deb /root/MVS-2.1.2_x86_64_20231116.deb
+RUN dpkg -i /root/MVS-2.1.2_x86_64_20231116.deb && rm /root/MVS-2.1.2_x86_64_20231116.deb
 ENV PATH $PATH:/opt/MVS/bin
 ENV MVCAM_COMMON_RUNENV /opt/MVS/lib
 ENV LD_LIBRARY_PATH /opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/bin:$LD_LIBRARY_PATH
@@ -38,9 +38,9 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
 # Create and build the catkin workspace
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && mkdir -p /root/catkin_ws/src && cd /root/catkin_ws/src \
-    && git clone --recurse-submodules https://github.com/ouster-lidar/ouster-ros.git \
+    && git clone --recurse-submodules https://github.com/PSA-module1/HIKROBOT-MVS-CAMERA-ROS.git \
     && cd /root/catkin_ws \
-    && catkin_make --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && catkin_make \
     && echo "source /root/catkin_ws/devel/setup.bash" >> ~/.bashrc
 
 # Set the working directory

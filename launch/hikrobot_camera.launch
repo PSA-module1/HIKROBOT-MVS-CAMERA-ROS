@@ -1,23 +1,22 @@
 <launch>
-    <!-- Load parameters from YAML file -->
-    <rosparam file="$(find hikrobot_camera)/config/camera.yaml" command="load"/>
 
     <!-- Set default parameters, which can be overridden by launch arguments -->
     <param name="serial_number" value="DA1785153"/> <!-- Camera serial number -->
     <param name="topic_name" value="/hik_camera"/> <!-- Camera topic name -->
     <param name="ros_loop_rate" value="20"/> <!-- ROS loop rate, use this one to set the camera frame rate -->
-    <param name="FrameRateEnable" value="false"/> <!-- Enable frame rate control -->
-    <param name="FrameRate" value="10"/> <!-- Frame rate -->
+    <param name="FrameRateEnable" value="true"/> <!-- Enable frame rate control -->
+    <param name="FrameRate" value="20"/> <!-- Frame rate -->
     <param name="BurstFrameCount" value="10"/> <!-- Burst frame count -->
+    <param name="ExposureAuto" value="2"/> <!-- Exposure auto mode 0: off, 1: once, 2: continuous -->
     <param name="ExposureTime" value="50000"/> <!-- Exposure time -->
-    <param name="GammaEnable" value="false"/> <!-- Enable gamma correction -->
+    <param name="GammaEnable" value="true"/> <!-- Enable gamma correction -->
     <param name="Gamma" value="0.5"/> <!-- Gamma value -->
     <param name="GainAuto" value="2"/> <!-- Gain auto mode 0: off, 1: once, 2: continuous -->
     <param name="BalanceWhiteAuto" value="1"/> <!-- White balance auto mode 0: off, 1: continuous -->
     <param name="SaturationEnable" value="true"/> <!-- Enable saturation -->
     <param name="Saturation" value="128"/> <!-- Saturation value -->
-    <param name="width" value="3072"/> <!-- Image width -->
-    <param name="height" value="2048"/> <!-- Image height -->
+    <param name="width" value="1080"/> <!-- Image width -->
+    <param name="height" value="720"/> <!-- Image height -->
     <param name="Offset_x" value="0"/> <!-- Image offset x -->
     <param name="Offset_y" value="0"/> <!-- Image offset y -->
     <param name="TriggerMode" value="1"/> <!-- Trigger mode 0: off, 1: on -->
