@@ -1,0 +1,133 @@
+#!/bin/bash
+
+# Desired network settings for the host interface
+DESIRED_IP="10.18.137.70"
+DESIRED_NETMASK="255.255.255.0"
+
+# Container name
+CONTAINER_NAME="hikvision_driver_2_0"
+
+# ROS parameters as environment variables
+# key parameters
+SERIAL_NUMBER="DA1785153" # serial number of the camera
+TOPIC_NAME="/hik_camera_2_0/rgb" # topic name for the camera
+ROS_LOOP_RATE="20" # loop rate of the ROS node
+WIDTH="1080"
+HEIGHT="720"
+
+# camera parameters, carefully adjust these parameters to get the best image quality
+## camera frame rate control
+FRAME_RATE_ENABLE="true"
+FRAME_RATE="20" # need to be consistent with ROS_LOOP_RATE, if FRAME_RATE_ENABLE is true
+## camera brush control
+BURST_FRAME_COUNT="10" # number of frames to be captured in one burst
+## camera exposure control
+EXPOSURE_AUTO="2" # 0: manual, 1: once, 2: continuous
+EXPOSURE_TIME="50000"
+## Gamma control
+GAMMA_ENABLE="true"
+GAMMA="0.5" # lower value for brighter image, higher value for darker image
+## Gain control
+GAIN_AUTO="2"
+## White balance control
+BALANCE_WHITE_AUTO="1"
+## Saturation control
+SATURATION_ENABLE="true"
+SATURATION="128"
+## offset control
+OFFSET_X="0"
+OFFSET_Y="0"
+## trigger control
+TRIGGER_MODE="1"
+TRIGGER_SOURCE="2"
+LINE_SELECTOR="2"
+
+# Function to check and install ifconfig
+check_and_install_ifconfig() {
+    if ! command -v ifconfig >/dev/null 2>&1; then
+        echo ">> ifconfig not found. Attempting to install net-tools..."
+        sudo apt-get update && sudo apt-get install -y net-tools
+    fi
+}
+
+# Function to check the current network settings
+check_network_settings() {
+    for INTERFACE in $(ifconfig -a | cut -d ' ' -f1 | tr ':' '\n' | awk NF)
+    do
+        CURRENT_IP=$(ifconfig "$INTERFACE" | grep 'inet ' | awk '{print $2}')
+        CURRENT_NETMASK=$(ifconfig "$INTERFACE" | grep 'netmask' | awk '{print $4}')
+        if [ "$CURRENT_IP" = "$DESIRED_IP" ] && [ "$CURRENT_NETMASK" = "$DESIRED_NETMASK" ]; then
+            echo ">> Network interface $INTERFACE already has the desired settings."
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+# Function to set up network interface
+set_network_interface() {
+    INTERFACE_NAME="$1"
+
+    echo ">> Setting up IP $DESIRED_IP and Netmask $DESIRED_NETMASK for $INTERFACE_NAME..."
+    sudo ifconfig "$INTERFACE_NAME" "$DESIRED_IP" netmask "$DESIRED_NETMASK" up
+}
+
+# Function to list all network interfaces and let user select one
+list_and_select_network_interfaces() {
+    echo ">> Available network interfaces:"
+    INTERFACES=$(ifconfig -a | cut -d ' ' -f1 | tr ':' '\n' | awk NF)
+    select INTERFACE_NAME in $INTERFACES; do
+        if [ -n "$INTERFACE_NAME" ]; then
+            echo ">> You selected $INTERFACE_NAME"
+            break
+        else
+            echo ">> Invalid selection. Please try again."
+        fi
+    done
+}
+
+# Check if ifconfig is installed
+check_and_install_ifconfig
+
+# Check if the container is already running
+if [ ! -z "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
+    echo ">> Container $CONTAINER_NAME is running. Stopping it..."
+    docker stop "$CONTAINER_NAME"
+fi
+
+
+# Check network settings
+if ! check_network_settings; then
+    echo ">> No network interface found with the required IP and netmask."
+    list_and_select_network_interfaces
+    set_network_interface "$INTERFACE_NAME"
+fi
+
+# Now, run the container with the specified IP address and password
+echo ">> Running container $CONTAINER_NAME..."
+docker run -itd --rm --name "$CONTAINER_NAME" --network=host --privileged \
+    eachan10/hikrobot-ros:noetic \
+    bash -c "source /root/catkin_ws/devel/setup.bash \
+    && roslaunch hikrobot_camera hikrobot_camera.launch \
+    serial_number:=$SERIAL_NUMBER \
+    topic_name:=$TOPIC_NAME \
+    ros_loop_rate:=$ROS_LOOP_RATE \
+    FrameRateEnable:=$FRAME_RATE_ENABLE \
+    FrameRate:=$FRAME_RATE \
+    BurstFrameCount:=$BURST_FRAME_COUNT \
+    ExposureAuto:=$EXPOSURE_AUTO \
+    ExposureTime:=$EXPOSURE_TIME \
+    GammaEnable:=$GAMMA_ENABLE \
+    Gamma:=$GAMMA \
+    GainAuto:=$GAIN_AUTO \
+    BalanceWhiteAuto:=$BALANCE_WHITE_AUTO \
+    SaturationEnable:=$SATURATION_ENABLE \
+    Saturation:=$SATURATION \
+    width:=$WIDTH \
+    height:=$HEIGHT \
+    Offset_x:=$OFFSET_X \
+    Offset_y:=$OFFSET_Y \
+    TriggerMode:=$TRIGGER_MODE \
+    TriggerSource:=$TRIGGER_SOURCE \
+    LineSelector:=$LINE_SELECTOR"
