@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     //string src = "",image_pub = "";
     //********** rosnode init **********/
     ros::init(argc, argv, "hikrobot_camera");
-    ros::NodeHandle hikrobot_camera;
+    ros::NodeHandle hikrobot_camera("~");
     
     //********** Get topic name from parameter **********/
     std::string topic_name;

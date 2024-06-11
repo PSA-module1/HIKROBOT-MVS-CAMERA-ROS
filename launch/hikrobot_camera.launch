@@ -25,36 +25,35 @@
     <arg name="TriggerSource" default="2"/>
     <arg name="LineSelector" default="2"/>
 
-    <!-- Set parameters using arguments -->
-    <param name="serial_number" value="$(arg serial_number)"/>
-    <param name="ros_loop_rate" value="$(arg ros_loop_rate)"/>
-    <param name="FrameRateEnable" value="$(arg FrameRateEnable)"/>
-    <param name="FrameRate" value="$(arg FrameRate)"/>
-    <param name="BurstFrameCount" value="$(arg BurstFrameCount)"/>
-    <param name="ExposureAuto" value="$(arg ExposureAuto)"/>
-    <param name="ExposureTime" value="$(arg ExposureTime)"/>
-    <param name="GammaEnable" value="$(arg GammaEnable)"/>
-    <param name="Gamma" value="$(arg Gamma)"/>
-    <param name="GainAuto" value="$(arg GainAuto)"/>
-    <param name="BalanceWhiteAuto" value="$(arg BalanceWhiteAuto)"/>
-    <param name="SaturationEnable" value="$(arg SaturationEnable)"/>
-    <param name="Saturation" value="$(arg Saturation)"/>
-    <param name="width" value="$(arg width)"/>
-    <param name="height" value="$(arg height)"/>
-    <param name="Offset_x" value="$(arg Offset_x)"/>
-    <param name="Offset_y" value="$(arg Offset_y)"/>
-    <param name="TriggerMode" value="$(arg TriggerMode)"/>
-    <param name="TriggerSource" value="$(arg TriggerSource)"/>
-    <param name="LineSelector" value="$(arg LineSelector)"/>
-    
-    <!-- Set the topic_name parameter using the argument -->
-    <param name="topic_name" value="$(arg topic_name)"/>
-
     <!-- Node definition for hikrobot_camera -->
-    <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera" respawn="true" output="screen"/>
+    <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera_$(arg serial_number)" respawn="true" output="screen">
+        <!-- Set the topic_name parameter using the argument -->
+        <param name="topic_name" value="$(arg topic_name)"/>
+        <!-- Set parameters using arguments -->
+        <param name="serial_number" value="$(arg serial_number)"/>
+        <param name="ros_loop_rate" value="$(arg ros_loop_rate)"/>
+        <param name="FrameRateEnable" value="$(arg FrameRateEnable)"/>
+        <param name="FrameRate" value="$(arg FrameRate)"/>
+        <param name="BurstFrameCount" value="$(arg BurstFrameCount)"/>
+        <param name="ExposureAuto" value="$(arg ExposureAuto)"/>
+        <param name="ExposureTime" value="$(arg ExposureTime)"/>
+        <param name="GammaEnable" value="$(arg GammaEnable)"/>
+        <param name="Gamma" value="$(arg Gamma)"/>
+        <param name="GainAuto" value="$(arg GainAuto)"/>
+        <param name="BalanceWhiteAuto" value="$(arg BalanceWhiteAuto)"/>
+        <param name="SaturationEnable" value="$(arg SaturationEnable)"/>
+        <param name="Saturation" value="$(arg Saturation)"/>
+        <param name="width" value="$(arg width)"/>
+        <param name="height" value="$(arg height)"/>
+        <param name="Offset_x" value="$(arg Offset_x)"/>
+        <param name="Offset_y" value="$(arg Offset_y)"/>
+        <param name="TriggerMode" value="$(arg TriggerMode)"/>
+        <param name="TriggerSource" value="$(arg TriggerSource)"/>
+        <param name="LineSelector" value="$(arg LineSelector)"/>
+    </node>
 
     <!-- Image Transport Node for republishing as compressed image -->
-    <node pkg="image_transport" type="republish" name="image_republisher" output="screen">
+    <node pkg="image_transport" type="republish" name="image_republisher_$(arg serial_number)" output="screen">
         <param name="in_transport" value="raw"/>
         <param name="out_transport" value="compressed"/>
         <remap from="in" to="$(arg topic_name)"/>
