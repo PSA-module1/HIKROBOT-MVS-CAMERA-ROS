@@ -1,8 +1,29 @@
 <launch>
+    <!-- Load parameters from YAML file -->
     <rosparam file="$(find hikrobot_camera)/config/camera.yaml" command="load"/>
-    <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera" respawn="true" output="screen" /> 
-    <!-- 
-    pkg指出ROS应该运行哪个pkg
-    type是可执行文件的名称
-    name则是可以任意给出的，它覆盖了原文件中ros::init指定的node的名字 -->
+
+    <!-- Set default parameters, which can be overridden by launch arguments -->
+    <param name="serial_number" value="DA1785153"/> <!-- Camera serial number -->
+    <param name="topic_name" value="/hik_camera"/> <!-- Camera topic name -->
+    <param name="ros_loop_rate" value="20"/> <!-- ROS loop rate, use this one to set the camera frame rate -->
+    <param name="FrameRateEnable" value="false"/> <!-- Enable frame rate control -->
+    <param name="FrameRate" value="10"/> <!-- Frame rate -->
+    <param name="BurstFrameCount" value="10"/> <!-- Burst frame count -->
+    <param name="ExposureTime" value="50000"/> <!-- Exposure time -->
+    <param name="GammaEnable" value="false"/> <!-- Enable gamma correction -->
+    <param name="Gamma" value="0.5"/> <!-- Gamma value -->
+    <param name="GainAuto" value="2"/> <!-- Gain auto mode 0: off, 1: once, 2: continuous -->
+    <param name="BalanceWhiteAuto" value="1"/> <!-- White balance auto mode 0: off, 1: continuous -->
+    <param name="SaturationEnable" value="true"/> <!-- Enable saturation -->
+    <param name="Saturation" value="128"/> <!-- Saturation value -->
+    <param name="width" value="3072"/> <!-- Image width -->
+    <param name="height" value="2048"/> <!-- Image height -->
+    <param name="Offset_x" value="0"/> <!-- Image offset x -->
+    <param name="Offset_y" value="0"/> <!-- Image offset y -->
+    <param name="TriggerMode" value="1"/> <!-- Trigger mode 0: off, 1: on -->
+    <param name="TriggerSource" value="2"/> <!-- Trigger source 0: line0, 1: line1, 2: software -->
+    <param name="LineSelector" value="2"/> <!-- Line selector 0: line0, 1: line1, 2: line2 -->
+
+    <!-- Node definition -->
+    <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera" respawn="true" output="screen"/>
 </launch>

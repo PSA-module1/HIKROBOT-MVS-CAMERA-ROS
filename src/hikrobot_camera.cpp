@@ -27,18 +27,25 @@ int main(int argc, char **argv)
     //********** rosnode init **********/
     ros::init(argc, argv, "hikrobot_camera");
     ros::NodeHandle hikrobot_camera;
+    
+    //********** Get topic name from parameter **********/
+    std::string topic_name;
+    int ros_loop_rate;
+    hikrobot_camera.param("topic_name", topic_name, std::string("/hikrobot_camera/rgb"));
+    hikrobot_camera.param("ros_loop_rate", ros_loop_rate, 10);
+
     camera::Camera MVS_cap(hikrobot_camera);
     //********** rosnode init **********/
     image_transport::ImageTransport main_cam_image(hikrobot_camera);
-    image_transport::CameraPublisher image_pub = main_cam_image.advertiseCamera("/hikrobot_camera/rgb", 1000);
+    image_transport::CameraPublisher image_pub = main_cam_image.advertiseCamera(topic_name, 1000);
 
     sensor_msgs::Image image_msg;
     sensor_msgs::CameraInfo camera_info_msg;
     cv_bridge::CvImagePtr cv_ptr = boost::make_shared<cv_bridge::CvImage>();
     cv_ptr->encoding = sensor_msgs::image_encodings::BGR8;  // 就是rgb格式 
     
-    //********** 10 Hz        **********/
-    ros::Rate loop_rate(10);
+    //********** 1adaptive params        **********/
+    ros::Rate loop_rate(ros_loop_rate);
 
     while (ros::ok())
     {
