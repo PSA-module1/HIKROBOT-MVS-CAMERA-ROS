@@ -1,28 +1,63 @@
 <launch>
+    <!-- Define arguments that can be passed to the launch file -->
+    <arg name="topic_name" default="/hik_camera"/>
 
-    <!-- Set default parameters, which can be overridden by launch arguments -->
-    <param name="serial_number" value="DA1785153"/> <!-- Camera serial number -->
-    <param name="topic_name" value="/hik_camera"/> <!-- Camera topic name -->
-    <param name="ros_loop_rate" value="20"/> <!-- ROS loop rate, use this one to set the camera frame rate -->
-    <param name="FrameRateEnable" value="true"/> <!-- Enable frame rate control -->
-    <param name="FrameRate" value="20"/> <!-- Frame rate -->
-    <param name="BurstFrameCount" value="10"/> <!-- Burst frame count -->
-    <param name="ExposureAuto" value="2"/> <!-- Exposure auto mode 0: off, 1: once, 2: continuous -->
-    <param name="ExposureTime" value="50000"/> <!-- Exposure time -->
-    <param name="GammaEnable" value="true"/> <!-- Enable gamma correction -->
-    <param name="Gamma" value="0.5"/> <!-- Gamma value -->
-    <param name="GainAuto" value="2"/> <!-- Gain auto mode 0: off, 1: once, 2: continuous -->
-    <param name="BalanceWhiteAuto" value="1"/> <!-- White balance auto mode 0: off, 1: continuous -->
-    <param name="SaturationEnable" value="true"/> <!-- Enable saturation -->
-    <param name="Saturation" value="128"/> <!-- Saturation value -->
-    <param name="width" value="1080"/> <!-- Image width -->
-    <param name="height" value="720"/> <!-- Image height -->
-    <param name="Offset_x" value="0"/> <!-- Image offset x -->
-    <param name="Offset_y" value="0"/> <!-- Image offset y -->
-    <param name="TriggerMode" value="1"/> <!-- Trigger mode 0: off, 1: on -->
-    <param name="TriggerSource" value="2"/> <!-- Trigger source 0: line0, 1: line1, 2: software -->
-    <param name="LineSelector" value="2"/> <!-- Line selector 0: line0, 1: line1, 2: line2 -->
+    <!-- Parameters for the hikrobot_camera node -->
+    <!-- Define arguments with defaults for each parameter -->
+    <arg name="serial_number" default="DA1785153"/>
+    <arg name="ros_loop_rate" default="20"/>
+    <arg name="FrameRateEnable" default="true"/>
+    <arg name="FrameRate" default="20"/>
+    <arg name="BurstFrameCount" default="10"/>
+    <arg name="ExposureAuto" default="2"/>
+    <arg name="ExposureTime" default="50000"/>
+    <arg name="GammaEnable" default="true"/>
+    <arg name="Gamma" default="0.5"/>
+    <arg name="GainAuto" default="2"/>
+    <arg name="BalanceWhiteAuto" default="1"/>
+    <arg name="SaturationEnable" default="true"/>
+    <arg name="Saturation" default="128"/>
+    <arg name="width" default="1080"/>
+    <arg name="height" default="720"/>
+    <arg name="Offset_x" default="0"/>
+    <arg name="Offset_y" default="0"/>
+    <arg name="TriggerMode" default="1"/>
+    <arg name="TriggerSource" default="2"/>
+    <arg name="LineSelector" default="2"/>
 
-    <!-- Node definition -->
+    <!-- Set parameters using arguments -->
+    <param name="serial_number" value="$(arg serial_number)"/>
+    <param name="ros_loop_rate" value="$(arg ros_loop_rate)"/>
+    <param name="FrameRateEnable" value="$(arg FrameRateEnable)"/>
+    <param name="FrameRate" value="$(arg FrameRate)"/>
+    <param name="BurstFrameCount" value="$(arg BurstFrameCount)"/>
+    <param name="ExposureAuto" value="$(arg ExposureAuto)"/>
+    <param name="ExposureTime" value="$(arg ExposureTime)"/>
+    <param name="GammaEnable" value="$(arg GammaEnable)"/>
+    <param name="Gamma" value="$(arg Gamma)"/>
+    <param name="GainAuto" value="$(arg GainAuto)"/>
+    <param name="BalanceWhiteAuto" value="$(arg BalanceWhiteAuto)"/>
+    <param name="SaturationEnable" value="$(arg SaturationEnable)"/>
+    <param name="Saturation" value="$(arg Saturation)"/>
+    <param name="width" value="$(arg width)"/>
+    <param name="height" value="$(arg height)"/>
+    <param name="Offset_x" value="$(arg Offset_x)"/>
+    <param name="Offset_y" value="$(arg Offset_y)"/>
+    <param name="TriggerMode" value="$(arg TriggerMode)"/>
+    <param name="TriggerSource" value="$(arg TriggerSource)"/>
+    <param name="LineSelector" value="$(arg LineSelector)"/>
+    
+    <!-- Set the topic_name parameter using the argument -->
+    <param name="topic_name" value="$(arg topic_name)"/>
+
+    <!-- Node definition for hikrobot_camera -->
     <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera" respawn="true" output="screen"/>
+
+    <!-- Image Transport Node for republishing as compressed image -->
+    <node pkg="image_transport" type="republish" name="image_republisher" output="screen">
+        <param name="in_transport" value="raw"/>
+        <param name="out_transport" value="compressed"/>
+        <remap from="in" to="$(arg topic_name)"/>
+        <remap from="out" to="$(arg topic_name)"/>
+    </node>
 </launch>

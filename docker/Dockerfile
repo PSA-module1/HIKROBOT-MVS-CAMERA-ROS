@@ -16,6 +16,7 @@ RUN apt update && apt upgrade -y && apt install -y \
     ros-${ROS_DISTRO}-cv-bridge \
     ros-${ROS_DISTRO}-image-transport \
     ros-${ROS_DISTRO}-camera-info-manager \
+    ros-${ROS_DISTRO}-compressed-image-transport \
     libx11-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,7 +39,7 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
 # Create and build the catkin workspace
 RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && mkdir -p /root/catkin_ws/src && cd /root/catkin_ws/src \
-    && git clone --recurse-submodules https://github.com/PSA-module1/HIKROBOT-MVS-CAMERA-ROS.git \
+    && git clone https://github.com/PSA-module1/HIKROBOT-MVS-CAMERA-ROS.git \
     && cd /root/catkin_ws \
     && catkin_make \
     && echo "source /root/catkin_ws/devel/setup.bash" >> ~/.bashrc
