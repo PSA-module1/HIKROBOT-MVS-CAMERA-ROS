@@ -38,7 +38,10 @@ enum CamerProperties
     CAP_PROP_TRIGGER_SOURCE,    //触发源
     CAP_PROP_LINE_SELECTOR,     //触发线
     CAP_PROP_EXPOSURE_AUTO,     // 自动曝光
-    CAP_PROP_BALANCE_WHITE_AUTO // 自动白平衡
+    CAP_PROP_BALANCE_WHITE_AUTO,// 自动白平衡
+    CAP_PROP_PIXEL_FORMAT,      // 像素格式
+    CAP_PROP_BINNING_HORIZONTAL,// 水平合并
+    CAP_PROP_BINNING_VERTICAL   // 垂直合并
 };
 
 //^ *********************************************************************************** //
@@ -88,6 +91,9 @@ private:
     int TriggerMode;
     int TriggerSource;
     int LineSelector;
+    int PixelFormat;
+    int BinningHorizontal;
+    int BinningVertical;
 };
 //^ *********************************************************************************** //
 
@@ -115,6 +121,9 @@ Camera::Camera(ros::NodeHandle &node)
     node.param("TriggerMode", TriggerMode, 1);
     node.param("TriggerSource", TriggerSource, 2);
     node.param("LineSelector", LineSelector, 2);
+    node.param("PixelFormat", PixelFormat, 0x02180014); // 默认像素格式 RGB
+    node.param("BinningHorizontal", BinningHorizontal, 1);
+    node.param("BinningVertical", BinningVertical, 1);
 
     //********** 枚举设备 ********************************/
     MV_CC_DEVICE_INFO_LIST stDeviceList;
@@ -189,36 +198,9 @@ Camera::Camera(ros::NodeHandle &node)
     this->set(CAP_PROP_SATURATION_ENABLE, SaturationEnable);
     if (SaturationEnable)
         this->set(CAP_PROP_SATURATION, Saturation);
-
-    nRet = MV_CC_SetEnumValue(handle, "TriggerMode", 0);
-    if (MV_OK == nRet)
-    {
-        printf("set TriggerMode OK!\n");
-    }
-    else
-    {
-        printf("MV_CC_SetTriggerMode fail! nRet [%x]\n", nRet);
-    }
-
-    nRet = MV_CC_SetEnumValue(handle, "PixelFormat", 0x02180014); // 目前 RGB  
-    if (MV_OK == nRet)
-    {
-        printf("set PixelFormat OK ! value = RGB\n");
-    }
-    else
-    {
-        printf("MV_CC_SetPixelFormat fail! nRet [%x]\n", nRet);
-    }
-    MVCC_ENUMVALUE t = {0};
-    nRet = MV_CC_GetEnumValue(handle, "PixelFormat", &t);
-    if (MV_OK == nRet)
-    {
-        printf("PixelFormat :%d!\n", t.nCurValue); // 35127316
-    }
-    else
-    {
-        printf("get PixelFormat fail! nRet [%x]\n", nRet);
-    }
+    this->set(CAP_PROP_PIXEL_FORMAT, PixelFormat);
+    this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal);
+    this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical);
 
     nRet = MV_CC_StartGrabbing(handle);
     if (MV_OK != nRet)
@@ -425,7 +407,7 @@ bool Camera::set(CamerProperties type, float value)
         }
         break;
     case CAP_PROP_TRIGGER_MODE:
-        nRet = MV_CC_SetEnumValue(handle, "TriggerMode", value); //饱和度 默认128 最大255
+        nRet = MV_CC_SetEnumValue(handle, "TriggerMode", value);
         if (MV_OK == nRet)
         {
             printf("set TriggerMode OK!\n");
@@ -436,7 +418,7 @@ bool Camera::set(CamerProperties type, float value)
         }
         break;
     case CAP_PROP_TRIGGER_SOURCE:
-        nRet = MV_CC_SetEnumValue(handle, "TriggerSource", value); //饱和度 默认128 最大255255
+        nRet = MV_CC_SetEnumValue(handle, "TriggerSource", value);
         if (MV_OK == nRet)
         {
             printf("set TriggerSource OK!\n");
@@ -447,7 +429,7 @@ bool Camera::set(CamerProperties type, float value)
         }
         break;
     case CAP_PROP_LINE_SELECTOR:
-        nRet = MV_CC_SetEnumValue(handle, "LineSelector", value); //饱和度 默认128 最大255
+        nRet = MV_CC_SetEnumValue(handle, "LineSelector", value);
         if (MV_OK == nRet)
         {
             printf("set LineSelector OK!\n");
@@ -479,6 +461,39 @@ bool Camera::set(CamerProperties type, float value)
             printf("Set BalanceWhiteAuto Failed! nRet = [%x]\n\n", nRet);
         }
         break;
+    case CAP_PROP_PIXEL_FORMAT:
+        nRet = MV_CC_SetEnumValue(handle, "PixelFormat", value); // 像素格式
+        if (MV_OK == nRet)
+        {
+            printf("set PixelFormat OK! value=%f\n", value);
+        }
+        else
+        {
+            printf("Set PixelFormat Failed! nRet = [%x]\n\n", nRet);
+        }
+        break;
+    case CAP_PROP_BINNING_HORIZONTAL:
+        nRet = MV_CC_SetIntValue(handle, "BinningHorizontal", value); // 水平合并
+        if (MV_OK == nRet)
+        {
+            printf("set BinningHorizontal OK! value=%f\n", value);
+        }
+        else
+        {
+            printf("Set BinningHorizontal Failed! nRet = [%x]\n\n", nRet);
+        }
+        break;
+    case CAP_PROP_BINNING_VERTICAL:
+        nRet = MV_CC_SetIntValue(handle, "BinningVertical", value); // 垂直合并
+        if (MV_OK == nRet)
+        {
+            printf("set BinningVertical OK! value=%f\n", value);
+        }
+        else
+        {
+            printf("Set BinningVertical Failed! nRet = [%x]\n\n", nRet);
+        }
+        break;
     default:
         return 0;
     }
@@ -506,6 +521,9 @@ bool Camera::reset()
     nRet = this->set(CAP_PROP_LINE_SELECTOR, LineSelector) || nRet;
     nRet = this->set(CAP_PROP_EXPOSURE_AUTO, ExposureAuto) || nRet;
     nRet = this->set(CAP_PROP_BALANCE_WHITE_AUTO, BalanceWhiteAuto) || nRet;
+    nRet = this->set(CAP_PROP_PIXEL_FORMAT, PixelFormat) || nRet;
+    nRet = this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal) || nRet;
+    nRet = this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical) || nRet;
     return nRet;
 }
 

@@ -24,6 +24,9 @@
     <arg name="TriggerMode" default="1"/>
     <arg name="TriggerSource" default="2"/>
     <arg name="LineSelector" default="2"/>
+    <arg name="PixelFormat" default="Mono8"/>
+    <arg name="BinningHorizontal" default="1"/>
+    <arg name="BinningVertical" default="1"/>
 
     <!-- Node definition for hikrobot_camera -->
     <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera_$(arg serial_number)" respawn="true" output="screen">
@@ -50,6 +53,9 @@
         <param name="TriggerMode" value="$(arg TriggerMode)"/>
         <param name="TriggerSource" value="$(arg TriggerSource)"/>
         <param name="LineSelector" value="$(arg LineSelector)"/>
+        <param name="PixelFormat" value="$(arg PixelFormat)"/>
+        <param name="BinningHorizontal" value="$(arg BinningHorizontal)"/>
+        <param name="BinningVertical" value="$(arg BinningVertical)"/>
     </node>
 
     <!-- Image Transport Node for republishing as compressed image -->
