@@ -26,8 +26,8 @@ ENV LC_ALL C.UTF-8
 ENV ROS_DISTRO noetic
 
 # Install MVS SDK 2.1.2
-COPY MVS-2.1.2_x86_64_20231116.deb /root/MVS-2.1.2_x86_64_20231116.deb
-RUN dpkg -i /root/MVS-2.1.2_x86_64_20231116.deb && rm /root/MVS-2.1.2_x86_64_20231116.deb
+COPY MVS-2.1.2_x86_64_20231116.deb /root/MVS-2.1.2_x86_64_20231225.deb
+RUN dpkg -i /root/MVS-2.1.2_x86_64_20231225.deb && rm /root/MVS-2.1.2_x86_64_20231225.deb
 ENV PATH $PATH:/opt/MVS/bin
 ENV MVCAM_COMMON_RUNENV /opt/MVS/lib
 ENV LD_LIBRARY_PATH /opt/MVS/lib/64:/opt/MVS/lib/32:/opt/MVS/bin:$LD_LIBRARY_PATH
