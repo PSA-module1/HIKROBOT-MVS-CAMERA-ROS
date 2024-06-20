@@ -37,8 +37,7 @@ RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
 
 # Create and build the catkin workspace
-RUN echo "Running catkin_make" \
-    && . /opt/ros/${ROS_DISTRO}/setup.sh \
+RUN . /opt/ros/${ROS_DISTRO}/setup.sh \
     && mkdir -p /root/catkin_ws/src && cd /root/catkin_ws/src \
     && git clone https://github.com/PSA-module1/HIKROBOT-MVS-CAMERA-ROS.git \
     && cd /root/catkin_ws \
