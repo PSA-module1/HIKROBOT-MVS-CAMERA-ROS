@@ -4,11 +4,11 @@
 
     <!-- Parameters for the hikrobot_camera node -->
     <!-- Define arguments with defaults for each parameter -->
-    <arg name="serial_number" default="DA1785153"/>
+    <arg name="serial_number" default="K78948599"/>
     <arg name="ros_loop_rate" default="20"/>
     <arg name="FrameRateEnable" default="true"/>
     <arg name="FrameRate" default="20"/>
-    <arg name="BurstFrameCount" default="10"/>
+    <arg name="BurstFrameCount" default="20"/>
     <arg name="ExposureAuto" default="2"/>
     <arg name="ExposureTime" default="50000"/>
     <arg name="GammaEnable" default="true"/>
@@ -17,16 +17,16 @@
     <arg name="BalanceWhiteAuto" default="1"/>
     <arg name="SaturationEnable" default="true"/>
     <arg name="Saturation" default="128"/>
-    <arg name="width" default="1080"/>
-    <arg name="height" default="720"/>
+    <arg name="width" default="1536"/>
+    <arg name="height" default="1024"/>
     <arg name="Offset_x" default="0"/>
     <arg name="Offset_y" default="0"/>
     <arg name="TriggerMode" default="1"/>
     <arg name="TriggerSource" default="2"/>
     <arg name="LineSelector" default="2"/>
-    <arg name="PixelFormat" default="Mono8"/>
-    <arg name="BinningHorizontal" default="1"/>
-    <arg name="BinningVertical" default="1"/>
+    <arg name="PixelFormat" default="0x02100032"/>
+    <arg name="BinningHorizontal" default="2"/>
+    <arg name="BinningVertical" default="2"/>
 
     <!-- Node definition for hikrobot_camera -->
     <node pkg="hikrobot_camera" type="hikrobot_camera" name="hikrobot_camera_$(arg serial_number)" respawn="true" output="screen">

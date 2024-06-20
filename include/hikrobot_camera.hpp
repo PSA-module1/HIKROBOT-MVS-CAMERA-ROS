@@ -473,7 +473,7 @@ bool Camera::set(CamerProperties type, float value)
         }
         break;
     case CAP_PROP_BINNING_HORIZONTAL:
-        nRet = MV_CC_SetIntValue(handle, "BinningHorizontal", value); // 水平合并
+        nRet = MV_CC_SetEnumValue(handle, "BinningHorizontal", value); // 水平合并
         if (MV_OK == nRet)
         {
             printf("set BinningHorizontal OK! value=%f\n", value);
@@ -484,7 +484,7 @@ bool Camera::set(CamerProperties type, float value)
         }
         break;
     case CAP_PROP_BINNING_VERTICAL:
-        nRet = MV_CC_SetIntValue(handle, "BinningVertical", value); // 垂直合并
+        nRet = MV_CC_SetEnumValue(handle, "BinningVertical", value); // 垂直合并
         if (MV_OK == nRet)
         {
             printf("set BinningVertical OK! value=%f\n", value);

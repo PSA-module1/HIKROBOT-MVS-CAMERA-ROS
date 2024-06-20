@@ -40,8 +40,8 @@ enum CamerProperties
     CAP_PROP_EXPOSURE_AUTO,     // 自动曝光
     CAP_PROP_BALANCE_WHITE_AUTO,// 自动白平衡
     CAP_PROP_PIXEL_FORMAT,      // 像素格式
-    CAP_PROP_BINNING_HORIZONTAL,// 水平合并
-    CAP_PROP_BINNING_VERTICAL   // 垂直合并
+    CAP_PROP_WIDTH_MAX,// 水平合并
+    CAP_PROP_HEIGHT_MAX   // 垂直合并
 };
 
 //^ *********************************************************************************** //
@@ -92,8 +92,8 @@ private:
     int TriggerSource;
     int LineSelector;
     int PixelFormat;
-    int BinningHorizontal;
-    int BinningVertical;
+    int WidthMax;
+    int HeightMax;
 };
 //^ *********************************************************************************** //
 
@@ -122,8 +122,8 @@ Camera::Camera(ros::NodeHandle &node)
     node.param("TriggerSource", TriggerSource, 2);
     node.param("LineSelector", LineSelector, 2);
     node.param("PixelFormat", PixelFormat, 0x02180014); // 默认像素格式 RGB
-    node.param("BinningHorizontal", BinningHorizontal, 1);
-    node.param("BinningVertical", BinningVertical, 1);
+    node.param("WidthMax", WidthMax, 1);
+    node.param("HeightMax", HeightMax, 1);
 
     //********** 枚举设备 ********************************/
     MV_CC_DEVICE_INFO_LIST stDeviceList;
@@ -199,8 +199,8 @@ Camera::Camera(ros::NodeHandle &node)
     if (SaturationEnable)
         this->set(CAP_PROP_SATURATION, Saturation);
     this->set(CAP_PROP_PIXEL_FORMAT, PixelFormat);
-    this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal);
-    this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical);
+    this->set(CAP_PROP_WIDTH_MAX, WidthMax);
+    this->set(CAP_PROP_HEIGHT_MAX, HeightMax);
 
     nRet = MV_CC_StartGrabbing(handle);
     if (MV_OK != nRet)
@@ -472,26 +472,26 @@ bool Camera::set(CamerProperties type, float value)
             printf("Set PixelFormat Failed! nRet = [%x]\n\n", nRet);
         }
         break;
-    case CAP_PROP_BINNING_HORIZONTAL:
-        nRet = MV_CC_SetIntValue(handle, "BinningHorizontal", value); // 水平合并
+    case CAP_PROP_WIDTH_MAX:
+        nRet = MV_CC_SetIntValue(handle, "WidthMax", value); // 水平合并
         if (MV_OK == nRet)
         {
-            printf("set BinningHorizontal OK! value=%f\n", value);
+            printf("set WidthMax OK! value=%f\n", value);
         }
         else
         {
-            printf("Set BinningHorizontal Failed! nRet = [%x]\n\n", nRet);
+            printf("Set WidthMax Failed! nRet = [%x]\n\n", nRet);
         }
         break;
-    case CAP_PROP_BINNING_VERTICAL:
-        nRet = MV_CC_SetIntValue(handle, "BinningVertical", value); // 垂直合并
+    case CAP_PROP_HEIGHT_MAX:
+        nRet = MV_CC_SetIntValue(handle, "HeightMax", value); // 垂直合并
         if (MV_OK == nRet)
         {
-            printf("set BinningVertical OK! value=%f\n", value);
+            printf("set HeightMax OK! value=%f\n", value);
         }
         else
         {
-            printf("Set BinningVertical Failed! nRet = [%x]\n\n", nRet);
+            printf("Set HeightMax Failed! nRet = [%x]\n\n", nRet);
         }
         break;
     default:
@@ -522,8 +522,8 @@ bool Camera::reset()
     nRet = this->set(CAP_PROP_EXPOSURE_AUTO, ExposureAuto) || nRet;
     nRet = this->set(CAP_PROP_BALANCE_WHITE_AUTO, BalanceWhiteAuto) || nRet;
     nRet = this->set(CAP_PROP_PIXEL_FORMAT, PixelFormat) || nRet;
-    nRet = this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal) || nRet;
-    nRet = this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical) || nRet;
+    nRet = this->set(CAP_PROP_WIDTH_MAX, WidthMax) || nRet;
+    nRet = this->set(CAP_PROP_HEIGHT_MAX, HeightMax) || nRet;
     return nRet;
 }
 
