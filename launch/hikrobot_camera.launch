@@ -17,8 +17,6 @@
     <arg name="BalanceWhiteAuto" default="1"/>
     <arg name="SaturationEnable" default="true"/>
     <arg name="Saturation" default="128"/>
-    <arg name="width" default="1536"/>
-    <arg name="height" default="1024"/>
     <arg name="Offset_x" default="0"/>
     <arg name="Offset_y" default="0"/>
     <arg name="TriggerMode" default="1"/>
@@ -46,8 +44,6 @@
         <param name="BalanceWhiteAuto" value="$(arg BalanceWhiteAuto)"/>
         <param name="SaturationEnable" value="$(arg SaturationEnable)"/>
         <param name="Saturation" value="$(arg Saturation)"/>
-        <param name="width" value="$(arg width)"/>
-        <param name="height" value="$(arg height)"/>
         <param name="Offset_x" value="$(arg Offset_x)"/>
         <param name="Offset_y" value="$(arg Offset_y)"/>
         <param name="TriggerMode" value="$(arg TriggerMode)"/>

@@ -24,8 +24,6 @@ enum CamerProperties
     CAP_PROP_FRAMERATE_ENABLE,  //帧数可调
     CAP_PROP_FRAMERATE,         //帧数
     CAP_PROP_BURSTFRAMECOUNT,   //外部一次触发帧数
-    CAP_PROP_HEIGHT,            //图像高度
-    CAP_PROP_WIDTH,             //图像宽度
     CAP_PROP_EXPOSURE_TIME,     //曝光时间
     CAP_PROP_GAMMA_ENABLE,      //伽马因子可调
     CAP_PROP_GAMMA,             //伽马因子
@@ -73,8 +71,6 @@ private:
     pthread_t nThreadID;
     //********** yaml config ******************************/
     int nRet;
-    int width;
-    int height;
     int Offset_x;
     int Offset_y;
     bool FrameRateEnable;
@@ -103,8 +99,6 @@ Camera::Camera(ros::NodeHandle &node)
     handle = NULL;
 
     //********** 读取待设置的摄像头参数 第三个参数是默认值 yaml文件未给出该值时生效 ********************************/
-    node.param("width", width, 3072);
-    node.param("height", height, 2048);
     node.param("FrameRateEnable", FrameRateEnable, false);
     node.param("FrameRate", FrameRate, 10);
     node.param("BurstFrameCount", BurstFrameCount, 10); // 一次触发采集的次数
@@ -186,8 +180,6 @@ Camera::Camera(ros::NodeHandle &node)
         this->set(CAP_PROP_FRAMERATE, FrameRate);
     this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal);
     this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical);
-    this->set(CAP_PROP_HEIGHT, height);
-    this->set(CAP_PROP_WIDTH, width);
     this->set(CAP_PROP_OFFSETX, Offset_x);
     this->set(CAP_PROP_OFFSETY, Offset_y);
     this->set(CAP_PROP_EXPOSURE_TIME, ExposureTime);
@@ -294,28 +286,6 @@ bool Camera::set(CamerProperties type, float value)
         else
         {
             printf("Set AcquisitionBurstFrameCount Failed! nRet = [%x]\n\n", nRet);
-        }
-        break;
-    case CAP_PROP_HEIGHT:
-        nRet = MV_CC_SetIntValue(handle, "Height", value); //图像高度
-        if (MV_OK == nRet)
-        {
-            printf("set Height OK!\n");
-        }
-        else
-        {
-            printf("Set Height Failed! nRet = [%x]\n\n", nRet);
-        }
-        break;
-    case CAP_PROP_WIDTH:
-        nRet = MV_CC_SetIntValue(handle, "Width", value); //图像宽度
-        if (MV_OK == nRet)
-        {
-            printf("set Width OK!\n");
-        }
-        else
-        {
-            printf("Set Width Failed! nRet = [%x]\n\n", nRet);
         }
         break;
     case CAP_PROP_OFFSETX:
@@ -506,8 +476,6 @@ bool Camera::reset()
     nRet = this->set(CAP_PROP_FRAMERATE_ENABLE, FrameRateEnable);
     nRet = this->set(CAP_PROP_FRAMERATE, FrameRate) || nRet;
     // nRet = this->set(CAP_PROP_BURSTFRAMECOUNT, BurstFrameCount) || nRet;
-    nRet = this->set(CAP_PROP_HEIGHT, height) || nRet;
-    nRet = this->set(CAP_PROP_WIDTH, width) || nRet;
     nRet = this->set(CAP_PROP_OFFSETX, Offset_x) || nRet;
     nRet = this->set(CAP_PROP_OFFSETY, Offset_y) || nRet;
     nRet = this->set(CAP_PROP_EXPOSURE_TIME, ExposureTime) || nRet;
