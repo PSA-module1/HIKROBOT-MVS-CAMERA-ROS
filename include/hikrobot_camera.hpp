@@ -184,6 +184,8 @@ Camera::Camera(ros::NodeHandle &node)
     this->set(CAP_PROP_FRAMERATE_ENABLE, FrameRateEnable);
     if (FrameRateEnable)
         this->set(CAP_PROP_FRAMERATE, FrameRate);
+    this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal);
+    this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical);
     this->set(CAP_PROP_HEIGHT, height);
     this->set(CAP_PROP_WIDTH, width);
     this->set(CAP_PROP_OFFSETX, Offset_x);
@@ -199,8 +201,6 @@ Camera::Camera(ros::NodeHandle &node)
     if (SaturationEnable)
         this->set(CAP_PROP_SATURATION, Saturation);
     this->set(CAP_PROP_PIXEL_FORMAT, PixelFormat);
-    this->set(CAP_PROP_BINNING_HORIZONTAL, BinningHorizontal);
-    this->set(CAP_PROP_BINNING_VERTICAL, BinningVertical);
 
     nRet = MV_CC_StartGrabbing(handle);
     if (MV_OK != nRet)
